@@ -1,16 +1,5 @@
 project_name: cloudac-dl
-release:
-  github:
-    owner: shahinam
-    name: cloudac-dl
-  draft: true
-brew:
-  github:
-    owner: shahinam
-    name: cloudac-dl
-  homepage: "https://github.com/shahinam/cloudac-dl"
-  description: "Downloads the video lectures for the given CloudAcademy course."
-  install: bin.install "cloudac-dl"
+
 builds:
   -
     goos:
@@ -22,6 +11,32 @@ builds:
     main: .
       ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
       binary: cloudac-dl
+
+release:
+  github:
+    owner: shahinam
+    name: cloudac-dl
+  draft: true
+
+brew:
+  github:
+    owner: shahinam
+    name: homebrew-cloudac-dl
+  folder: Formula
+  homepage: "https://github.com/shahinam/cloudac-dl"
+  description: "Downloads the video lectures for the given CloudAcademy course."
+  install: bin.install "cloudac-dl"
+  test: |
+    system "#{bin}/cloudac-dl -v"
+
+fpm:
+  homepage: https://github.com/shahinam/cloudac-dl
+  description: "Downloads the video lectures for the given CloudAcademy course."
+  license: Apache 2.0
+  formats:
+    - deb
+    - rpm
+
 archive:
   format: tar.gz
   name_template: '{{ .Binary }}_{{.Version}}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{.Arm }}{{ end }}'
@@ -29,5 +44,6 @@ archive:
     - LICENSE*
     - README*
     - CHANGELOG*
+
 snapshot:
   name_template: SNAPSHOT-{{ .Commit }}

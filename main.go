@@ -8,7 +8,7 @@ import (
 	"github.com/shahinam/cloudac-dl/client"
 )
 
-var version = "1.0"
+var version = "1.0.1"
 
 // CommandLineOptions Command line options.
 type CommandLineOptions struct {
