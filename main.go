@@ -8,6 +8,8 @@ import (
 	"github.com/shahinam/cloudac-dl/client"
 )
 
+var version = "1.0"
+
 // CommandLineOptions Command line options.
 type CommandLineOptions struct {
 	userName   string
