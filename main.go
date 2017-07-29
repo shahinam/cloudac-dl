@@ -28,7 +28,12 @@ func main() {
 	c.SetUserName(args.userName)
 	c.SetPassWord(args.passWord)
 
-	course := &client.Course{args.courseURL, args.saveDir, args.resolution}
+	course := &client.Course{
+		CourseURL:  args.courseURL,
+		SaveDir:    args.saveDir,
+		Resolution: args.resolution,
+	}
+
 	// Login.
 	err := c.Login()
 	if err != nil {
@@ -45,14 +50,14 @@ func parseCommandLineArgs() *CommandLineOptions {
 	args := &CommandLineOptions{}
 	dir, _ := os.Getwd()
 
-	flag.StringVar(&args.userName, "user", "", "The login email address for your CloudAcademy account.")
-	flag.StringVar(&args.passWord, "password", "", "The password for your CloudAcademy account.")
+	flag.StringVar(&args.userName, "user", "", "The login email address for your Cloud Academy account.")
+	flag.StringVar(&args.passWord, "password", "", "The password for your Cloud Academy account.")
 	flag.StringVar(&args.saveDir, "out", dir, "The directory where the videos are saved.")
 	flag.StringVar(&args.resolution, "res", "720p", "The required video resolution. Allowed values are 360, 720, and 1080.")
 
 	flag.Usage = func() {
 		fmt.Printf("cloudac-dl version 1.0\n")
-		fmt.Printf("  Downloads the video lectures for the given CloudAcademy course.\n")
+		fmt.Printf("  Downloads the video lectures for the given Cloud Academy course.\n")
 		fmt.Printf("  https://github.com/shahinam/cloudac-dl\n\n")
 
 		fmt.Printf("Usage\n")

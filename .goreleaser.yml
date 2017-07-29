@@ -3,7 +3,13 @@ release:
   github:
     owner: shahinam
     name: cloudac-dl
+  draft: true
 brew:
+  github:
+    owner: shahinam
+    name: cloudac-dl
+  homepage: "https://github.com/shahinam/cloudac-dl"
+  description: "Downloads the video lectures for the given CloudAcademy course."
   install: bin.install "cloudac-dl"
 builds:
 - goos:
