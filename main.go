@@ -8,15 +8,16 @@ import (
 	"github.com/shahinam/cloudac-dl/client"
 )
 
-var version = "1.0.1"
+var version = "1.1.0"
 
 // CommandLineOptions Command line options.
 type CommandLineOptions struct {
-	userName   string
-	passWord   string
-	saveDir    string
-	resolution string
-	courseURL  string
+	userName       string
+	passWord       string
+	saveDir        string
+	resolution     string
+	courseURL      string
+	isLearningPath bool
 }
 
 func main() {
@@ -40,9 +41,12 @@ func main() {
 		fmt.Printf("Failed to Login.")
 		os.Exit(1)
 	}
-
-	// Download course.
-	c.DownloadCourse(course)
+	if args.isLearningPath == true {
+		c.DownloadLearningPath(course)
+	} else {
+		// Download course.
+		c.DownloadCourse(course)
+	}
 }
 
 // Parse command line arguments.
@@ -54,6 +58,7 @@ func parseCommandLineArgs() *CommandLineOptions {
 	flag.StringVar(&args.passWord, "password", "", "The password for your Cloud Academy account.")
 	flag.StringVar(&args.saveDir, "out", dir, "The directory where the videos are saved.")
 	flag.StringVar(&args.resolution, "res", "720p", "The required video resolution. Allowed values are 360, 720, and 1080.")
+	flag.BoolVar(&args.isLearningPath, "path", false, "The provided URL is a learning path.")
 
 	flag.Usage = func() {
 		fmt.Printf("cloudac-dl version 1.0\n")

@@ -54,6 +54,31 @@ func New() *Client {
 	return client
 }
 
+// DownloadLearningPath downloads all courses in a learning path.
+func (c *Client) DownloadLearningPath(co *Course) {
+	fmt.Println("Downloading Learning path: ", co.CourseURL)
+
+	d, err := c.GetDocument(co.CourseURL)
+	if err != nil {
+		fmt.Println("Failed to download the page.")
+		os.Exit(1)
+	}
+
+	links := []Link{}
+	d.Find("#path-landing article[data-type='course'] a").Each(func(_ int, s *goquery.Selection) {
+		href, _ := s.Attr("href")
+		title, _ := s.Attr("title")
+
+		link := Link{title, href}
+		links = append(links, link)
+	})
+
+	for _, link := range links {
+		co.CourseURL = link.URL
+		c.DownloadCourse(co)
+	}
+}
+
 // DownloadCourse retrives all videos of a give course.
 func (c *Client) DownloadCourse(co *Course) {
 	fmt.Println("Downloading course: ", co.CourseURL)

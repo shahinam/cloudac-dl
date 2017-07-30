@@ -24,15 +24,15 @@ brew:
     name: homebrew-cloudac-dl
   folder: Formula
   homepage: "https://github.com/shahinam/cloudac-dl"
-  description: "Downloads the video lectures for the given CloudAcademy course."
+  description: "Downloads the video lectures for the given Cloud Academy course."
   install: bin.install "cloudac-dl"
   test: |
     system "#{bin}/cloudac-dl -v"
 
 fpm:
   homepage: https://github.com/shahinam/cloudac-dl
-  description: "Downloads the video lectures for the given CloudAcademy course."
-  license: Apache 2.0
+  description: "Downloads the video lectures for the given Cloud Academy course."
+  license: MIT
   formats:
     - deb
     - rpm
