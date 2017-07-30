@@ -4,8 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"syscall"
 
 	"github.com/shahinam/cloudac-dl/client"
+
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 var version = "1.1.0"
@@ -74,9 +77,16 @@ func parseCommandLineArgs() *CommandLineOptions {
 
 	flag.Parse()
 
-	if flag.NArg() == 0 || args.userName == "" || args.passWord == "" {
+	if flag.NArg() == 0 || args.userName == "" {
 		flag.Usage()
 		os.Exit(1)
+	}
+
+	// If password is not provided - get it interactively.
+	if args.passWord == "" {
+		fmt.Print("Please enter password: ")
+		password, _ := terminal.ReadPassword(int(syscall.Stdin))
+		args.passWord = string(password)
 	}
 
 	args.courseURL = flag.Arg(0)

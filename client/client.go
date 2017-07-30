@@ -104,7 +104,7 @@ func (c *Client) DownloadCourse(co *Course) {
 		filePath := filepath.Join(co.SaveDir, coursePath, fileName)
 		i++
 
-		fmt.Printf("Downloading: %s", link.Title)
+		fmt.Printf("Downloading Video: %s", link.Title)
 		videoURL, err := c.GetVideoUrl(link.URL, co)
 		if err != nil {
 			fmt.Printf(" ERROR: Unable to grab video file\n")
