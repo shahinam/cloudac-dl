@@ -82,7 +82,7 @@ func (c *Client) DownloadLearningPath(co *Course) error {
 	// Download courses.
 	for _, link := range links {
 		co.CourseURL = link.URL
-		c.DownloadCourse(co)
+		_ = c.DownloadCourse(co)
 	}
 
 	return nil
@@ -213,11 +213,8 @@ func (c *Client) DownloadFile(url string, filePath string) error {
 
 	// Writer the body to file
 	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 // Login into the application.

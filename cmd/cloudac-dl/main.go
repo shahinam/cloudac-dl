@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -37,14 +38,13 @@ func main() {
 	app.Usage = `Downloads the video lectures for the given Cloud Academy course.
 	 Homepage: https://github.com/shahinam/cloudac-dl`
 	app.Authors = []cli.Author{
-		cli.Author{
+		{
 			Name:  "Muhammad Inam",
 			Email: "mohdinamshah@gmail.com",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		cli.ShowAppHelp(c)
-		return nil
+		return cli.ShowAppHelp(c)
 	}
 
 	app.Flags = []cli.Flag{
@@ -75,21 +75,24 @@ func main() {
 			Name:    "course",
 			Aliases: []string{"i"},
 			Usage:   "Download a course.",
-			Action:  downloadCourse,
+			Action: func(c *cli.Context) error {
+				return download(c, "course")
+			},
 		},
 		{
 			Name:    "path",
 			Aliases: []string{"i"},
 			Usage:   "Download all courses in learning path.",
-			Action:  downloadLearningPath,
+			Action: func(c *cli.Context) error {
+				return download(c, "path")
+			},
 		},
 	}
 
-	app.Run(os.Args)
+	_ = app.Run(os.Args)
 }
 
-// Download learning path
-func downloadLearningPath(c *cli.Context) error {
+func download(c *cli.Context, op string) error {
 	args := parseCommandLineArgs(c)
 
 	co := &client.Course{
@@ -99,35 +102,19 @@ func downloadLearningPath(c *cli.Context) error {
 	}
 
 	cl := getClient(c, args)
-	err := cl.DownloadCourse(co)
+
+	err := errors.New("invalid operation")
+	if op == "course" {
+		err = cl.DownloadCourse(co)
+	} else if op == "path" {
+		err = cl.DownloadLearningPath(co)
+	}
 
 	if err != nil {
 		log.Error(err.Error())
-		return err
 	}
 
-	return nil
-}
-
-// Download course
-func downloadCourse(c *cli.Context) error {
-	args := parseCommandLineArgs(c)
-
-	co := &client.Course{
-		CourseURL:  args.courseURL,
-		SaveDir:    args.saveDir,
-		Resolution: args.resolution,
-	}
-
-	cl := getClient(c, args)
-	err := cl.DownloadLearningPath(co)
-
-	if err != nil {
-		log.Error(err.Error())
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // Get client.
@@ -157,7 +144,7 @@ func parseCommandLineArgs(c *cli.Context) *CommandLineOptions {
 
 	// Command line options.
 	if args.userName == "" || c.NArg() == 0 {
-		cli.ShowAppHelp(c)
+		_ = cli.ShowAppHelp(c)
 		os.Exit(1)
 	}
 

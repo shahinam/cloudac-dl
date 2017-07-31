@@ -2,6 +2,7 @@ project_name: cloudac-dl
 
 builds:
   -
+    main: ./cmd/cloudac-dl/main.go
     goos:
       - linux
       - darwin
