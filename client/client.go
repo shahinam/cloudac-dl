@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gosimple/slug"
 )
 
 const (
@@ -97,24 +98,24 @@ func (c *Client) DownloadCourse(co *Course) {
 
 	i := 1
 	for _, link := range m {
-		fileName := fmt.Sprintf("%2d-%s", i, link.Title)
-		fileName = cleanFileName(fileName)
+		fileName := fmt.Sprintf("%02d-%s", i, link.Title)
+		fileName = slug.Make(fileName)
 		fileName += ".mp4"
 
 		filePath := filepath.Join(co.SaveDir, coursePath, fileName)
 		i++
 
-		fmt.Printf("Downloading Video: %s", link.Title)
-		videoURL, err := c.GetVideoUrl(link.URL, co)
+		fmt.Printf("  Downloading Video: %s", link.Title)
+		videoURL, err := c.GetVideoURL(link.URL, co)
 		if err != nil {
 			fmt.Printf(" ERROR: Unable to grab video file\n")
 		} else {
 			err = c.DownloadFile(videoURL, filePath)
 			if err != nil {
 				fmt.Printf(" ERROR: Unable to download\n")
+			} else {
+				fmt.Printf(" Done\n")
 			}
-
-			fmt.Printf(" Done\n")
 		}
 	}
 }
@@ -153,8 +154,8 @@ func (c *Client) GetDocument(url string) (*goquery.Document, error) {
 	return goquery.NewDocumentFromResponse(res)
 }
 
-// GetVideoUrl - Get video URL from page.
-func (c *Client) GetVideoUrl(link string, co *Course) (string, error) {
+// GetVideoURL - Get video URL from page.
+func (c *Client) GetVideoURL(link string, co *Course) (string, error) {
 	d, err := c.GetDocument(link)
 	if err != nil {
 		return "", err

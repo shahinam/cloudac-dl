@@ -14,6 +14,18 @@
   revision = "349dd0209470eabd9514242c688c403c0926d266"
 
 [[projects]]
+  name = "github.com/gosimple/slug"
+  packages = ["."]
+  revision = "e756f2ec7e1e59e2ef20938fac5e677842641777"
+  version = "v1.1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/rainycape/unidecode"
+  packages = ["."]
+  revision = "cb7f23ec59bec0d61b19c56cd88cee3d0cc1870c"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
@@ -34,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2e47f785ea66f20f20ff7dc463a465d620be090cf0a82363413be226ccd9bc12"
+  inputs-digest = "ca8292e9b9bf57c2e0d623bef5ffe0e76e61bdb904d9736d5da39c5f18c36a42"
   solver-name = "gps-cdcl"
   solver-version = 1
