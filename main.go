@@ -15,7 +15,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-var version = "1.x-dev"
+var version = "1.2.0"
 
 // CommandLineOptions Command line options.
 type CommandLineOptions struct {
