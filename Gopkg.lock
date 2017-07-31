@@ -14,16 +14,34 @@
   revision = "349dd0209470eabd9514242c688c403c0926d266"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/apex/log"
+  packages = [".","handlers/cli"]
+  revision = "0296d6eb16bb28f8a0c55668affcf4876dc269be"
+
+[[projects]]
   name = "github.com/gosimple/slug"
   packages = ["."]
   revision = "e756f2ec7e1e59e2ef20938fac5e677842641777"
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/rainycape/unidecode"
   packages = ["."]
   revision = "cb7f23ec59bec0d61b19c56cd88cee3d0cc1870c"
+
+[[projects]]
+  name = "github.com/urfave/cli"
+  packages = ["."]
+  revision = "0bdeddeeb0f650497d603c4ad7b20cfe685682f6"
+  version = "v1.19.1"
 
 [[projects]]
   branch = "master"
@@ -46,6 +64,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ca8292e9b9bf57c2e0d623bef5ffe0e76e61bdb904d9736d5da39c5f18c36a42"
+  inputs-digest = "a1a777f25d687d10efc0aac42b0515e5611f7e8e39b4aef56851858365f0620d"
   solver-name = "gps-cdcl"
   solver-version = 1

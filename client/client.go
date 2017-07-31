@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/apex/log"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gosimple/slug"
 )
@@ -56,13 +58,12 @@ func New() *Client {
 }
 
 // DownloadLearningPath downloads all courses in a learning path.
-func (c *Client) DownloadLearningPath(co *Course) {
-	fmt.Println("Downloading Learning path: ", co.CourseURL)
+func (c *Client) DownloadLearningPath(co *Course) error {
+	log.Info("Downloading Learning path: " + co.CourseURL)
 
 	d, err := c.GetDocument(co.CourseURL)
 	if err != nil {
-		fmt.Println("Failed to download the page.")
-		os.Exit(1)
+		return err
 	}
 
 	links := []Link{}
@@ -74,27 +75,41 @@ func (c *Client) DownloadLearningPath(co *Course) {
 		links = append(links, link)
 	})
 
+	if len(links) == 0 {
+		return errors.New("No courses found")
+	}
+
+	// Download courses.
 	for _, link := range links {
 		co.CourseURL = link.URL
 		c.DownloadCourse(co)
 	}
+
+	return nil
 }
 
 // DownloadCourse retrives all videos of a give course.
-func (c *Client) DownloadCourse(co *Course) {
-	fmt.Println("Downloading course: ", co.CourseURL)
+func (c *Client) DownloadCourse(co *Course) error {
+	log.Info("Downloading course: " + co.CourseURL)
 
 	u, _ := url.Parse(co.CourseURL)
 	coursePath := u.Path
 
 	// Configure the target directory.
 	dir := filepath.Join(co.SaveDir, coursePath)
-	if os.MkdirAll(dir, 0777) != nil {
-		fmt.Printf("Unable to create directory %s", dir)
-		os.Exit(1)
+	err := os.MkdirAll(dir, 0777)
+	if err != nil {
+		return err
 	}
 
-	m, _ := c.CourseContents(co.CourseURL)
+	m, err := c.CourseContents(co.CourseURL)
+	if err != nil {
+		return err
+	}
+
+	if len(m) == 0 {
+		return errors.New("No videos found")
+	}
 
 	i := 1
 	for _, link := range m {
@@ -105,19 +120,22 @@ func (c *Client) DownloadCourse(co *Course) {
 		filePath := filepath.Join(co.SaveDir, coursePath, fileName)
 		i++
 
-		fmt.Printf("  Downloading Video: %s", link.Title)
+		log.Infof("Downloading Video: %s", link.Title)
+
 		videoURL, err := c.GetVideoURL(link.URL, co)
 		if err != nil {
-			fmt.Printf(" ERROR: Unable to grab video file\n")
+			log.Error("Unable to grab video file")
 		} else {
 			err = c.DownloadFile(videoURL, filePath)
 			if err != nil {
-				fmt.Printf(" ERROR: Unable to download\n")
+				log.Error("Unable to download")
 			} else {
-				fmt.Printf(" Done\n")
+				log.Info("Done")
 			}
 		}
 	}
+
+	return nil
 }
 
 // CourseContents Get video Urls.
