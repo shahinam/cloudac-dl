@@ -103,8 +103,8 @@ func main() {
 }
 
 // Read the input file into URL array.
-func readInputFile(args *CommandLineOptions) ([]string, error) {
-	file, err := os.Open(args.inputFile)
+func readInputFile(inputFile string) ([]string, error) {
+	file, err := os.Open(inputFile)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func readInputFile(args *CommandLineOptions) ([]string, error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		text := strings.Trim(scanner.Text(), " ")
-		if !strings.HasPrefix(text, "#") {
+		if text != "" || !strings.HasPrefix(text, "#") {
 			lines = append(lines, scanner.Text())
 		}
 	}
@@ -125,10 +125,17 @@ func readInputFile(args *CommandLineOptions) ([]string, error) {
 // Download.
 func download(c *cli.Context, op string) error {
 	args := parseCommandLineArgs(c)
-	cl := getClient(c, args)
-	links, err := readInputFile(args)
+	cl, err := getClient(c, args)
 	if err != nil {
-		return err
+		log.Fatal(err.Error())
+	}
+
+	links := []string{}
+	if args.inputFile != "" {
+		links, err = readInputFile(args.inputFile)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Append the url if provided.
@@ -146,7 +153,7 @@ func download(c *cli.Context, op string) error {
 		co.CourseURL = link
 
 		// set an error if invalid op is provided.
-		err = errors.New("invalid operation")
+		err := errors.New("invalid operation")
 
 		if op == "course" {
 			err = cl.DownloadCourse(co)
@@ -163,7 +170,7 @@ func download(c *cli.Context, op string) error {
 }
 
 // Get client.
-func getClient(c *cli.Context, args *CommandLineOptions) *client.Client {
+func getClient(c *cli.Context, args *CommandLineOptions) (*client.Client, error) {
 	// Get the client & course.
 	cl := client.New()
 	cl.SetUserName(args.userName)
@@ -171,11 +178,8 @@ func getClient(c *cli.Context, args *CommandLineOptions) *client.Client {
 
 	// Login.
 	err := cl.Login()
-	if err != nil {
-		log.Fatal("Failed to Login.")
-	}
 
-	return cl
+	return cl, err
 }
 
 // Parse command line arguments.
