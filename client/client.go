@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/apex/log"
+	lcli "github.com/apex/log/handlers/cli"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gosimple/slug"
@@ -44,9 +45,13 @@ type Link struct {
 	URL   string
 }
 
+func init() {
+	log.SetHandler(lcli.Default)
+	log.SetLevel(log.DebugLevel)
+}
+
 // New returns a  Client.
 func New() *Client {
-	//client := &Client{&http.Client{}, &goquery.Document{}}
 	client := &Client{}
 	client.Client = &http.Client{}
 	client.Document = &goquery.Document{}
@@ -67,7 +72,7 @@ func (c *Client) DownloadLearningPath(co *Course) error {
 	}
 
 	links := []Link{}
-	d.Find("#path-landing article[data-type='course'] a").Each(func(_ int, s *goquery.Selection) {
+	d.Find("article[data-type='course'] a").Each(func(_ int, s *goquery.Selection) {
 		href, _ := s.Attr("href")
 		title, _ := s.Attr("title")
 
@@ -168,6 +173,7 @@ func (c *Client) GetDocument(url string) (*goquery.Document, error) {
 	if e != nil {
 		return nil, e
 	}
+	defer res.Body.Close()
 
 	return goquery.NewDocumentFromResponse(res)
 }
@@ -235,6 +241,15 @@ func (c *Client) Login() error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	d, err := c.GetDocument(baseURL)
+	if err != nil {
+		return err
+	}
+
+	if d.Find(".user-image").Length() == 0 {
+		return errors.New("failed to login, please verify credentials")
+	}
 
 	return nil
 }
